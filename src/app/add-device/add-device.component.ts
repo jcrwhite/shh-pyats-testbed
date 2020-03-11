@@ -1,5 +1,14 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  Input,
+  ViewChild,
+  ElementRef
+} from '@angular/core';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil, filter } from 'rxjs/operators';
 import { Device, Connection } from '../models/device';
@@ -12,43 +21,50 @@ import { Device, Connection } from '../models/device';
 export class AddDeviceComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
 
+  @Input()
+  set ctx(d: Device) {
+    if (d && this.device.pristine) {
+      this.device.removeControl('name');
+      this.device.setValue(d);
+    } else if (!d) {
+      this.clear();
+    }
+  }
+
   @Output() changes: EventEmitter<Partial<Device>> = new EventEmitter();
+
+  @Output() valid: EventEmitter<boolean> = new EventEmitter();
 
   errorMsg: string;
 
-  device: { [propName: string]: FormControl } = {
+  device: FormGroup = new FormGroup({
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(2),
       Validators.pattern(/^[\w]*$/)
     ]),
     alias: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w]*$/)]),
-    os: new FormControl('', [Validators.required]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(8),
-      Validators.pattern(/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
-    ])
-  };
+    os: new FormControl('', [Validators.required])
+    // password: new FormControl('', [
+    //   Validators.required,
+    //   Validators.minLength(8),
+    //   Validators.pattern(/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
+    // ])
+  });
+
+  @ViewChild('name', { static: false }) nameInput: ElementRef;
 
   constructor() {}
 
   ngOnInit(): void {
-    combineLatest(
-      Object.entries(this.device).map(([key, control]) =>
-        control.valueChanges.pipe(
-          filter(() => control.valid),
-          map(change => ({ [key]: change })),
-          startWith({})
-        )
-      )
-    )
-      .pipe(
-        debounceTime(100),
-        map(changes => changes.reduce((accu, change) => ({ ...accu, ...change }), {})),
-        takeUntil(this.unsubscribe)
-      )
-      .subscribe(changes => this.changes.emit(changes));
+    this.device.valueChanges
+      .pipe(debounceTime(100), takeUntil(this.unsubscribe))
+      .subscribe(changes => {
+        this.valid.emit(this.device.valid);
+        if (this.device.valid) {
+          this.changes.emit(changes);
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -56,24 +72,35 @@ export class AddDeviceComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
+  clear(): void {
+    this.focusName();
+    this.device.reset();
+  }
+
+  focusName(): void {
+    this.nameInput.nativeElement.focus();
+  }
+
   getNameError() {
-    return this.device.name.hasError('required') || this.device.name.hasError('minlength')
+    return this.device.controls.name.hasError('required') ||
+      this.device.controls.name.hasError('minlength')
       ? 'device name must be at least 2 characters'
-      : this.device.name.hasError('pattern')
+      : this.device.controls.name.hasError('pattern')
       ? 'device name can not contain spaces or special characters'
       : '';
   }
 
   getAliasError() {
-    return this.device.alias.hasError('minlength')
+    return this.device.controls.alias.hasError('minlength')
       ? 'device alias must be at least 2 characters'
-      : this.device.alias.hasError('pattern')
+      : this.device.controls.alias.hasError('pattern')
       ? 'device alias can not contain spaces or special characters'
       : '';
   }
 
   getOSError() {
-    return this.device.os.hasError('required') || this.device.os.hasError('minlength')
+    return this.device.controls.os.hasError('required') ||
+      this.device.controls.os.hasError('minlength')
       ? 'device OS must be at least 2 characters'
       : '';
   }

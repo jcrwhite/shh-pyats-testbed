@@ -15,7 +15,19 @@ export class PreviewService {
   constructor() {}
 
   private _createYaml(data: object): string {
+    console.log(data);
     return yaml.safeDump(data);
+  }
+
+  private _sanitize(data: object): object {
+    return Object.keys(data).reduce((accu, key) => {
+      if (typeof data[key] !== 'object') {
+        accu[key] = data[key];
+      } else if (data[key] && Object.keys(data[key]).length > 0) {
+        accu[key] = this._sanitize(data[key]);
+      }
+      return accu;
+    }, {});
   }
 
   update(data: object): void {
@@ -23,6 +35,6 @@ export class PreviewService {
       this.previewSubject.next('');
       return;
     }
-    this.previewSubject.next(this._createYaml(data));
+    this.previewSubject.next(this._createYaml(this._sanitize(data)));
   }
 }

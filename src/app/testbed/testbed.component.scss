@@ -1,0 +1,7 @@
+.mat-expansion-panel {
+  min-width: 600px;
+  & .mat-form-field {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}

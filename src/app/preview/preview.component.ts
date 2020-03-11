@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PreviewService } from '../preview.service';
 import { Observable } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { PreviewService } from '../preview.service';
 
 @Component({
   selector: 'shh-preview',

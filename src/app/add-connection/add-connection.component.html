@@ -1,35 +1,29 @@
-<mat-card>
-  <mat-card-content>
-    <div class="row justify-content-center align-items-center">
-      <div class="col full-width">
-        <div class="row justify-content-center align-items-center">
-          <div class="col">
-            <mat-form-field>
-              <input matInput placeholder="Name" [formControl]="connection.name" required />
-              <mat-error *ngIf="connection.name.invalid">{{ getNameError() }}</mat-error>
-            </mat-form-field>
-          </div>
-          <div class="col">
-            <mat-form-field>
-              <input matInput placeholder="Alias" [formControl]="connection.alias" />
-              <mat-error *ngIf="connection.alias.invalid">{{ getAliasError() }}</mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-        <div class="row justify-content-center align-items-center">
-          <div class="col">
-            <mat-form-field>
-              <input matInput placeholder="class" [formControl]="connection.class" />
-              <mat-error *ngIf="connection.class.invalid">{{ getVIAError() }}</mat-error>
-            </mat-form-field>
-          </div>
-          <div class="col">
-            <mat-form-field>
-              <input matInput placeholder="via" [formControl]="connection.via" />
-            </mat-form-field>
-          </div>
-        </div>
-      </div>
+<form [formGroup]="connection">
+  <div class="row justify-content-center align-items-center">
+    <div class="col full-width">
+      <mat-form-field>
+        <input #name matInput placeholder="Name" formControlName="name" />
+        <mat-error *ngIf="connection.controls.name.invalid">{{ getNameError() }}</mat-error>
+      </mat-form-field>
     </div>
-  </mat-card-content>
-</mat-card>
+    <div class="col full-width">
+      <mat-form-field>
+        <input matInput placeholder="Alias" formControlName="alias" />
+        <mat-error *ngIf="connection.controls.alias.invalid">{{ getAliasError() }}</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row justify-content-center align-items-center">
+    <div class="col full-width">
+      <mat-form-field>
+        <input matInput placeholder="class" formControlName="class" />
+        <mat-error *ngIf="connection.controls.class.invalid">{{ getVIAError() }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="col full-width">
+      <mat-form-field>
+        <input matInput placeholder="via" formControlName="via" />
+      </mat-form-field>
+    </div>
+  </div>
+</form>

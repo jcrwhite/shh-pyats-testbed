@@ -1,5 +1,6 @@
 export interface Device {
-  name: string;
+  name?: string;
+  // below are actual device fields
   alias?: string;
   os: string;
   platform?: string;
@@ -9,7 +10,8 @@ export interface Device {
 }
 
 export interface Connection {
-  name: string;
+  name?: string;
+  // below are actual connection fields
   alias?: string;
   class?: string;
   via?: string;

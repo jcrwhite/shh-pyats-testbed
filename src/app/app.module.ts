@@ -8,6 +8,9 @@ import { MaterialModule } from './material/material.module';
 import { PreviewComponent } from './preview/preview.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { AddConnectionComponent } from './add-connection/add-connection.component';
+import { DeviceComponent } from './device/device.component';
+import { TestbedComponent } from './testbed/testbed.component';
+import { ConnectionComponent } from './connection/connection.component';
 
 export function getHighlightLanguages() {
   return {
@@ -16,7 +19,15 @@ export function getHighlightLanguages() {
 }
 
 @NgModule({
-  declarations: [AppComponent, AddDeviceComponent, PreviewComponent, AddConnectionComponent],
+  declarations: [
+    AppComponent,
+    AddDeviceComponent,
+    PreviewComponent,
+    AddConnectionComponent,
+    DeviceComponent,
+    TestbedComponent,
+    ConnectionComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
