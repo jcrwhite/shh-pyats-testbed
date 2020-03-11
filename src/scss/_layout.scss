@@ -1,0 +1,44 @@
+.d-flex {
+  display: flex !important;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  & .col {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.align-center {
+  align-self: center;
+}
+
+.alight-content-center {
+  align-content: center;
+}
+
+.justify-center {
+  justify-self: center;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.container {
+  padding: 10px;
+}
+
+.wrapper {
+  margin: 10px;
+}
+
+.fill-remaining-space {
+  flex: 1 1 auto;
+}

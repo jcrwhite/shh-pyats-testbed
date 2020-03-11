@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { PreviewService } from './preview.service';
+import { Device } from './models/device';
 
 @Component({
   selector: 'shh-root',
@@ -6,5 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'shh-pyats-testbed';
+  constructor(private preview: PreviewService) {}
+
+  updateDevice(device: Partial<Device>): void {
+    const temp = { [device.name]: device };
+    delete device.name;
+    this.preview.update(temp);
+  }
 }

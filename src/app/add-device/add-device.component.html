@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-content>
+    <div class="row justify-content-center align-items-center">
+      <div class="col full-width">
+        <mat-error *ngIf="errorMsg">{{ errorMsg }}</mat-error>
+        <div class="row justify-content-center align-items-center">
+          <div class="col full-width">
+            <mat-form-field>
+              <input matInput placeholder="Name" [formControl]="device.name" required />
+              <mat-error *ngIf="device.name.invalid">{{ getNameError() }}</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col full-width">
+            <mat-form-field>
+              <input matInput placeholder="Alias" [formControl]="device.alias" />
+              <mat-error *ngIf="device.alias.invalid">{{ getAliasError() }}</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <mat-form-field>
+          <input matInput placeholder="OS" [formControl]="device.os" required />
+          <mat-error *ngIf="device.os.invalid">{{ getOSError() }}</mat-error>
+        </mat-form-field>
+        <shh-add-connection></shh-add-connection>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

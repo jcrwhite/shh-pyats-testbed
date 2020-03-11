@@ -1,0 +1,7 @@
+.mat-card {
+  min-width: 350px;
+  & .mat-form-field {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
