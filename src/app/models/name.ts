@@ -119,4 +119,4 @@ const sampleNames = () => {
   return names.slice(si, si + 1)[0];
 };
 
-export const getName = () => `${sampleColor()}-${sampleNames()}`.replace(' ', '-');
+export const getName = () => `${sampleColor()}-${sampleNames()}`.replace(/\s/g, '-');
