@@ -3,9 +3,23 @@
     Create a Testbed
   </h2>
 </div>
-
 <div class="row justify-content-center">
-  <shh-testbed class="wrapper"></shh-testbed>
   <!-- <shh-add-device class="wrapper"></shh-add-device> -->
-  <shh-preview class="wrapper"></shh-preview>
+  <div class="col">
+    <div class="row wrapper">
+      <span class="fill-remaining-space"></span>
+      <button
+        [cdkCopyToClipboard]="yaml | async"
+        mat-mini-fab
+        color="accent"
+        aria-label="Copy testbed yaml to clipboard"
+      >
+        <mat-icon>file_copy</mat-icon>
+      </button>
+    </div>
+    <div class="row">
+      <shh-testbed class="wrapper"></shh-testbed>
+      <shh-preview class="wrapper"></shh-preview>
+    </div>
+  </div>
 </div>
