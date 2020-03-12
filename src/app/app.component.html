@@ -4,9 +4,20 @@
   </h2>
 </div>
 <div class="row justify-content-center">
-  <!-- <shh-add-device class="wrapper"></shh-add-device> -->
   <div class="col">
     <div class="row wrapper">
+      <form [formGroup]="testbed">
+        <mat-form-field>
+          <input
+            #name
+            matInput
+            placeholder="Name"
+            formControlName="name"
+            (keyup)="updateTestbedName()"
+          />
+          <mat-error *ngIf="testbed.controls.name.invalid">{{ getNameError() }}</mat-error>
+        </mat-form-field>
+      </form>
       <span class="fill-remaining-space"></span>
       <button
         [cdkCopyToClipboard]="yaml | async"

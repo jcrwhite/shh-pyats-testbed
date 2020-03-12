@@ -15,14 +15,19 @@ export class PreviewService {
   constructor() {}
 
   private _createYaml(data: object): string {
-    console.log(data);
     return yaml.safeDump(data);
   }
 
   private _sanitize(data: object): object {
     return Object.keys(data).reduce((accu, key) => {
       if (typeof data[key] !== 'object') {
-        accu[key] = data[key];
+        if (typeof data[key] === 'string') {
+          if (!!data[key]) {
+            accu[key] = data[key];
+          }
+        } else {
+          accu[key] = data[key];
+        }
       } else if (data[key] && Object.keys(data[key]).length > 0) {
         accu[key] = this._sanitize(data[key]);
       }

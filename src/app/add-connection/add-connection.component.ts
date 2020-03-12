@@ -5,7 +5,8 @@ import {
   OnInit,
   Output,
   ViewChild,
-  ElementRef
+  ElementRef,
+  Input
 } from '@angular/core';
 import { FormControl, Validators, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { combineLatest, Subject } from 'rxjs';
@@ -27,6 +28,16 @@ export function isIP(): ValidatorFn {
 })
 export class AddConnectionComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
+
+  @Input()
+  set ctx(c: Connection) {
+    if (c && this.connection.pristine) {
+      this.connection.removeControl('name');
+      this.connection.setValue({ ...c });
+    } else if (!c) {
+      this.clear();
+    }
+  }
 
   @Output() changes: EventEmitter<Partial<Connection>> = new EventEmitter();
 
@@ -68,7 +79,6 @@ export class AddConnectionComponent implements OnInit, OnDestroy {
   }
 
   clear(): void {
-    console.log('clear');
     this.focusName();
     this.connection.reset();
   }
@@ -86,10 +96,10 @@ export class AddConnectionComponent implements OnInit, OnDestroy {
   }
 
   getClassError() {
-    return this.connection.controls.via.hasError('required') ||
-      this.connection.controls.via.hasError('minlength')
+    return this.connection.controls.class.hasError('required') ||
+      this.connection.controls.class.hasError('minlength')
       ? 'connection class must be at least 2 characters'
-      : this.connection.controls.alias.hasError('pattern')
+      : this.connection.controls.class.hasError('pattern')
       ? 'connection class must be alphanumeric'
       : '';
   }

@@ -23,7 +23,8 @@ export class TestbedComponent implements OnInit {
   validConnection = false;
 
   @ViewChild('newDeviceRef', { static: true }) newDeviceRef: AddDeviceComponent;
-  @ViewChild(AddConnectionComponent, { static: true }) newConnectionRef: AddConnectionComponent;
+  @ViewChild('newConnectionRef', { static: true }) newConnectionRef: AddConnectionComponent;
+  @ViewChild('connectionRef', { static: false }) connectionRef: AddConnectionComponent;
 
   constructor(private tbService: TestbedService) {}
 
@@ -48,6 +49,7 @@ export class TestbedComponent implements OnInit {
   }
 
   clearCtx(): void {
+    this.clearNewConnectionCtx();
     this.ctxDevice = {} as Device;
     this.newDeviceRef.clear();
   }
@@ -82,29 +84,69 @@ export class TestbedComponent implements OnInit {
     this.ctxConnection = {};
   }
 
-  addConnection(): void {
+  addConnection(device: string): void {
+    this.tbService.addConnection(device, { ...this.ctxConnection });
+    this.clearConnectionCtx();
+  }
+
+  addNewConnection(): void {
     const { name, ...data } = this.ctxConnection;
     if (!this.ctxDevice.connections) {
       this.ctxDevice.connections = {};
     }
     this.ctxDevice.connections[name] = data;
+    this.clearNewConnectionCtx();
+  }
+
+  removeNewConnection(name: string): void {
+    if (this.ctxDevice.connections) {
+      delete this.ctxDevice.connections[name];
+    }
+  }
+
+  clearNewConnectionCtx(): void {
+    this.ctxConnection = {};
+    this.newConnectionRef.clear();
   }
 
   clearConnectionCtx(): void {
     this.ctxConnection = {};
-    this.newConnectionRef.clear();
+    this.connectionRef.clear();
   }
 
   handleNewConnectionChanges(changes: Connection): void {
     this.ctxConnection = changes;
   }
 
-  connectionKeyUpHandler(e: KeyboardEvent): void {
+  handleNewConnectionEdit(name: string, changes: Connection): void {
+    if (!this.ctxDevice.connections) {
+      return;
+    }
+    this.ctxDevice.connections[name] = changes;
+  }
+
+  handleConnectionsChanges(device: string, name: string, changes: Connection): void {
+    this.tbService.updateConnection(device, { name, ...changes });
+  }
+
+  removeConnection(device: string, name: string): void {
+    this.tbService.removeConnection(device, name);
+  }
+
+  connectionKeyUpHandler(e: KeyboardEvent, device?: string): void {
     if (e.code === 'Enter') {
       e.stopPropagation();
       if (this.validConnection) {
-        this.addConnection();
+        if (device) {
+          this.addConnection(device);
+        } else {
+          this.addNewConnection();
+        }
       }
     }
+  }
+
+  trackConnectionBy(id: number, connection: { key: string; value: object }): string {
+    return connection.key;
   }
 }

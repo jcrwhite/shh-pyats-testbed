@@ -1,6 +1,6 @@
 <form [formGroup]="connection">
   <div class="row justify-content-center align-items-center">
-    <div class="col full-width">
+    <div *ngIf="connection.controls.name" class="col full-width">
       <mat-form-field>
         <input #name matInput placeholder="Name" formControlName="name" />
         <mat-error *ngIf="connection.controls.name.invalid">{{ getNameError() }}</mat-error>

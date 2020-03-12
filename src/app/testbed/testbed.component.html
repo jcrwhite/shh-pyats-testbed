@@ -1,3 +1,4 @@
+<!-- Displaying / Editing Devices -->
 <mat-accordion>
   <mat-expansion-panel
     *ngFor="let device of (testbed | async)?.devices | keyvalue; trackBy: trackDeviceBy"
@@ -15,6 +16,67 @@
       [ctx]="device.value"
       (changes)="handleDeviceChanges(device.key, $event)"
     ></shh-add-device>
+    <mat-accordion>
+      <!-- display / edit connections -->
+      <mat-expansion-panel
+        *ngFor="let connection of device.value.connections | keyvalue; trackBy: trackConnectionBy"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ connection.key }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ connection.alias }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <shh-add-connection
+          [ctx]="connection.value"
+          (changes)="handleConnectionsChanges(device.key, connection.key, $event)"
+        ></shh-add-connection>
+        <mat-action-row>
+          <button
+            (click)="removeConnection(device.key, connection.key)"
+            mat-raised-button
+            color="warn"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+      <!-- end display connection -->
+      <!-- new connections -->
+      <mat-expansion-panel (keypress)="connectionKeyUpHandler($event, device.key)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            New Connection
+          </mat-panel-title>
+          <mat-panel-description>
+            Add a new connection
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <shh-add-connection
+          #connectionRef
+          (valid)="validConnection = $event"
+          (changes)="handleNewConnectionChanges($event)"
+        ></shh-add-connection>
+        <mat-action-row>
+          <button (click)="clearConnectionCtx()" mat-raised-button>
+            <mat-icon>block</mat-icon>
+          </button>
+          <button
+            (click)="addConnection(device.key)"
+            mat-raised-button
+            color="primary"
+            [disabled]="!validConnection"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+      <!-- enf new connections -->
+    </mat-accordion>
     <mat-action-row>
       <button mat-raised-button color="warn" (click)="removeDevice(device.key)">
         <mat-icon>delete</mat-icon>
@@ -22,6 +84,7 @@
     </mat-action-row>
   </mat-expansion-panel>
 
+  <!-- Adding Devices -->
   <mat-expansion-panel [expanded]="showNew" (keypress)="deviceKeyUpHandler($event)">
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -38,8 +101,11 @@
       (valid)="validDevice = $event"
     ></shh-add-device>
     <!-- connections -->
-    <mat-accordion (keypress)="connectionKeyUpHandler($event)">
-      <mat-expansion-panel *ngFor="let connection of ctxDevice.connections | keyvalue">
+    <mat-accordion>
+      <!-- display / edit connections -->
+      <mat-expansion-panel
+        *ngFor="let connection of ctxDevice.connections | keyvalue; trackBy: trackConnectionBy"
+      >
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ connection.key }}
@@ -49,14 +115,20 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <!-- <shh-add-connection></shh-add-connection> -->
+        <shh-add-connection
+          [ctx]="connection.value"
+          (changes)="handleNewConnectionEdit(connection.key, $event)"
+        ></shh-add-connection>
         <mat-action-row>
-          <button mat-raised-button color="warn">
+          <button (click)="removeNewConnection(connection.key)" mat-raised-button color="warn">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-action-row>
       </mat-expansion-panel>
-      <mat-expansion-panel>
+      <!-- end display connections -->
+
+      <!-- new connections -->
+      <mat-expansion-panel (keypress)="connectionKeyUpHandler($event)">
         <mat-expansion-panel-header>
           <mat-panel-title>
             New Connection
@@ -67,6 +139,7 @@
         </mat-expansion-panel-header>
 
         <shh-add-connection
+          #newConnectionRef
           (valid)="validConnection = $event"
           (changes)="handleNewConnectionChanges($event)"
         ></shh-add-connection>
@@ -75,7 +148,7 @@
             <mat-icon>block</mat-icon>
           </button>
           <button
-            (click)="addConnection()"
+            (click)="addNewConnection()"
             mat-raised-button
             color="primary"
             [disabled]="!validConnection"
@@ -84,6 +157,7 @@
           </button>
         </mat-action-row>
       </mat-expansion-panel>
+      <!-- enf new connections -->
     </mat-accordion>
     <!-- end connections -->
     <mat-action-row>
@@ -93,4 +167,5 @@
       </button>
     </mat-action-row>
   </mat-expansion-panel>
+  <!-- end add device -->
 </mat-accordion>
