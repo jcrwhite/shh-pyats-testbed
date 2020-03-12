@@ -24,8 +24,9 @@ export class AddDeviceComponent implements OnInit, OnDestroy {
   @Input()
   set ctx(d: Device) {
     if (d && this.device.pristine) {
+      const { connections, ...data } = d;
       this.device.removeControl('name');
-      this.device.setValue(d);
+      this.device.setValue(data);
     } else if (!d) {
       this.clear();
     }
@@ -43,8 +44,10 @@ export class AddDeviceComponent implements OnInit, OnDestroy {
       Validators.minLength(2),
       Validators.pattern(/^[\w]*$/)
     ]),
-    alias: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w]*$/)]),
-    os: new FormControl('', [Validators.required])
+    alias: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w-]*$/)]),
+    os: new FormControl('', [Validators.required, Validators.pattern(/^[\w-]*$/)]),
+    platform: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w-]*$/)]),
+    role: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w-]*$/)])
     // password: new FormControl('', [
     //   Validators.required,
     //   Validators.minLength(8),
@@ -86,7 +89,7 @@ export class AddDeviceComponent implements OnInit, OnDestroy {
       this.device.controls.name.hasError('minlength')
       ? 'device name must be at least 2 characters'
       : this.device.controls.name.hasError('pattern')
-      ? 'device name can not contain spaces or special characters'
+      ? 'device name must be alphanumeric'
       : '';
   }
 
@@ -94,7 +97,7 @@ export class AddDeviceComponent implements OnInit, OnDestroy {
     return this.device.controls.alias.hasError('minlength')
       ? 'device alias must be at least 2 characters'
       : this.device.controls.alias.hasError('pattern')
-      ? 'device alias can not contain spaces or special characters'
+      ? 'device alias must be alphanumeric'
       : '';
   }
 
@@ -102,6 +105,24 @@ export class AddDeviceComponent implements OnInit, OnDestroy {
     return this.device.controls.os.hasError('required') ||
       this.device.controls.os.hasError('minlength')
       ? 'device OS must be at least 2 characters'
+      : '';
+  }
+
+  getPlatformError() {
+    return this.device.controls.platform.hasError('required') ||
+      this.device.controls.platform.hasError('minlength')
+      ? 'device platform must be at least 2 characters'
+      : this.device.controls.platform.hasError('pattern')
+      ? 'device platform must be alphanumeric'
+      : '';
+  }
+
+  getRoleError() {
+    return this.device.controls.platform.hasError('required') ||
+      this.device.controls.platform.hasError('minlength')
+      ? 'device platform must be at least 2 characters'
+      : this.device.controls.platform.hasError('pattern')
+      ? 'device platform must be alphanumeric'
       : '';
   }
 }

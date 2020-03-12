@@ -8,21 +8,36 @@
     </div>
     <div class="col full-width">
       <mat-form-field>
-        <input matInput placeholder="Alias" formControlName="alias" />
-        <mat-error *ngIf="connection.controls.alias.invalid">{{ getAliasError() }}</mat-error>
+        <input matInput placeholder="Class" formControlName="class" />
+        <mat-error *ngIf="connection.controls.class.invalid">{{ getClassError() }}</mat-error>
       </mat-form-field>
     </div>
   </div>
   <div class="row justify-content-center align-items-center">
     <div class="col full-width">
       <mat-form-field>
-        <input matInput placeholder="class" formControlName="class" />
-        <mat-error *ngIf="connection.controls.class.invalid">{{ getVIAError() }}</mat-error>
+        <input matInput placeholder="Protocol" formControlName="protocol" />
+        <mat-error *ngIf="connection.controls.protocol.invalid">{{ getProtocolError() }}</mat-error>
       </mat-form-field>
     </div>
     <div class="col full-width">
       <mat-form-field>
-        <input matInput placeholder="via" formControlName="via" />
+        <input matInput placeholder="Host" formControlName="host" />
+        <mat-error *ngIf="connection.controls.protocol.invalid">{{ getHostError() }}</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row justify-content-center align-items-center">
+    <div class="col full-width">
+      <mat-form-field>
+        <input matInput placeholder="IP" formControlName="ip" />
+        <mat-error *ngIf="connection.controls.ip.invalid">{{ getIPError() }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="col full-width">
+      <mat-form-field>
+        <input matInput type="number" placeholder="Port" formControlName="port" />
+        <mat-error *ngIf="connection.controls.port.invalid">{{ getPortError() }}</mat-error>
       </mat-form-field>
     </div>
   </div>

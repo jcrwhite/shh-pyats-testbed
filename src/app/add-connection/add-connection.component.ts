@@ -7,10 +7,18 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { FormControl, Validators, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil, filter } from 'rxjs/operators';
 import { Connection } from '../models/device';
+import * as ip from 'ip-regex';
+
+export function isIP(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const invalid = !ip({ exact: true }).test(control.value);
+    return invalid ? { isIP: { value: control.value } } : null;
+  };
+}
 
 @Component({
   selector: 'shh-add-connection',
@@ -30,11 +38,13 @@ export class AddConnectionComponent implements OnInit, OnDestroy {
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(2),
-      Validators.pattern(/^[\w]*$/)
+      Validators.pattern(/^[\w-]*$/)
     ]),
-    alias: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w]*$/)]),
-    class: new FormControl(''),
-    via: new FormControl('', [Validators.pattern(/^[\w]*$/)])
+    class: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w-]*$/)]),
+    protocol: new FormControl('', [Validators.minLength(2)]),
+    host: new FormControl('', [Validators.minLength(2), Validators.pattern(/^[\w-.]*$/)]),
+    ip: new FormControl('', [isIP()]),
+    port: new FormControl('', [Validators.minLength(2)])
   });
 
   @ViewChild('name', { static: false }) nameInput: ElementRef;
@@ -58,6 +68,7 @@ export class AddConnectionComponent implements OnInit, OnDestroy {
   }
 
   clear(): void {
+    console.log('clear');
     this.focusName();
     this.connection.reset();
   }
@@ -70,20 +81,54 @@ export class AddConnectionComponent implements OnInit, OnDestroy {
     return this.connection.controls.name.hasError('required')
       ? 'connection name is required'
       : this.connection.controls.name.hasError('pattern')
-      ? 'connection name can not contain spaces or special characters'
+      ? 'connection name must be alphanumeric'
       : '';
   }
 
-  getAliasError() {
-    return this.connection.controls.alias.hasError('pattern')
-      ? 'connection alias can not contain spaces or special characters'
+  getClassError() {
+    return this.connection.controls.via.hasError('required') ||
+      this.connection.controls.via.hasError('minlength')
+      ? 'connection class must be at least 2 characters'
+      : this.connection.controls.alias.hasError('pattern')
+      ? 'connection class must be alphanumeric'
+      : '';
+  }
+
+  getHostError() {
+    return this.connection.controls.host.hasError('required') ||
+      this.connection.controls.host.hasError('minlength')
+      ? 'connection host must be at least 2 characters'
+      : this.connection.controls.host.hasError('pattern')
+      ? 'connection host must be alphanumeric'
       : '';
   }
 
   getVIAError() {
     return this.connection.controls.via.hasError('required') ||
       this.connection.controls.via.hasError('minlength')
-      ? 'connection OS must be at least 2 characters'
+      ? 'connection via must be at least 2 characters'
+      : '';
+  }
+
+  getProtocolError() {
+    return this.connection.controls.protocol.hasError('required') ||
+      this.connection.controls.protocol.hasError('minlength')
+      ? 'connection protocol must be at least 2 characters'
+      : '';
+  }
+
+  getPortError() {
+    return this.connection.controls.port.hasError('required') ||
+      this.connection.controls.port.hasError('minlength')
+      ? 'connection port must be at least 2 characters'
+      : '';
+  }
+
+  getIPError() {
+    return this.connection.controls.ip.hasError('required')
+      ? 'connection ip is required'
+      : this.connection.controls.ip.hasError('isIP')
+      ? 'connection ip must be a valid v4 or v6 address'
       : '';
   }
 }

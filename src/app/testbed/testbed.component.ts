@@ -5,6 +5,7 @@ import { Device, Connection } from '../models/device';
 import { Testbed } from '../models/testbed';
 import { TestbedService } from '../testbed.service';
 import { AddDeviceComponent } from '../add-device/add-device.component';
+import { AddConnectionComponent } from '../add-connection/add-connection.component';
 
 @Component({
   selector: 'shh-testbed',
@@ -16,11 +17,13 @@ export class TestbedComponent implements OnInit {
 
   showNew = false;
   ctxDevice: Device;
+  ctxConnection: Connection;
 
   validDevice = false;
   validConnection = false;
 
   @ViewChild('newDeviceRef', { static: true }) newDeviceRef: AddDeviceComponent;
+  @ViewChild(AddConnectionComponent, { static: true }) newConnectionRef: AddConnectionComponent;
 
   constructor(private tbService: TestbedService) {}
 
@@ -75,10 +78,25 @@ export class TestbedComponent implements OnInit {
   }
 
   // Connection functions
-  addConnection(): void {}
+  newConnection(): void {
+    this.ctxConnection = {};
+  }
+
+  addConnection(): void {
+    const { name, ...data } = this.ctxConnection;
+    if (!this.ctxDevice.connections) {
+      this.ctxDevice.connections = {};
+    }
+    this.ctxDevice.connections[name] = data;
+  }
+
+  clearConnectionCtx(): void {
+    this.ctxConnection = {};
+    this.newConnectionRef.clear();
+  }
 
   handleNewConnectionChanges(changes: Connection): void {
-    console.log(changes);
+    this.ctxConnection = changes;
   }
 
   connectionKeyUpHandler(e: KeyboardEvent): void {

@@ -54,7 +54,7 @@ export class TestbedService {
   }
 
   updateDevice(name: string, device: Device): void {
-    this.tb.devices[name] = { ...device };
+    this.tb.devices[name] = { ...device, ...{ connections: this.tb.devices[name].connections } };
     this.next();
   }
 

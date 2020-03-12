@@ -16,7 +16,9 @@
       (changes)="handleDeviceChanges(device.key, $event)"
     ></shh-add-device>
     <mat-action-row>
-      <button mat-raised-button color="warn" (click)="removeDevice(device.key)">Delete</button>
+      <button mat-raised-button color="warn" (click)="removeDevice(device.key)">
+        <mat-icon>delete</mat-icon>
+      </button>
     </mat-action-row>
   </mat-expansion-panel>
 
@@ -50,7 +52,7 @@
         <!-- <shh-add-connection></shh-add-connection> -->
         <mat-action-row>
           <button mat-raised-button color="warn">
-            Delete
+            <mat-icon>delete</mat-icon>
           </button>
         </mat-action-row>
       </mat-expansion-panel>
@@ -69,18 +71,25 @@
           (changes)="handleNewConnectionChanges($event)"
         ></shh-add-connection>
         <mat-action-row>
-          <button mat-raised-button>Cancel</button>
-          <button mat-raised-button color="primary" [disabled]="!validConnection">
-            Add
+          <button (click)="clearConnectionCtx()" mat-raised-button>
+            <mat-icon>block</mat-icon>
+          </button>
+          <button
+            (click)="addConnection()"
+            mat-raised-button
+            color="primary"
+            [disabled]="!validConnection"
+          >
+            <mat-icon>add</mat-icon>
           </button>
         </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>
     <!-- end connections -->
     <mat-action-row>
-      <button mat-raised-button (click)="clearCtx()">Cancel</button>
+      <button mat-raised-button (click)="clearCtx()"><mat-icon>block</mat-icon></button>
       <button mat-raised-button color="primary" [disabled]="!validDevice" (click)="addDevice()">
-        Add
+        <mat-icon>add</mat-icon>
       </button>
     </mat-action-row>
   </mat-expansion-panel>
